@@ -1,20 +1,17 @@
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import {
   COORDINATS_FETCH_REQUESTED,
   COORDINATS_FETCH_SUCCEEDED,
   COORDINATS_FETCH_FAILED,
-} from 'constants';
+  GET_NOTIFICATIONS_BY_LOCATION,
+} from 'constants'
+import * as Api from 'Api'
 
-import * as Api from 'Api';
-console.log(Api)
-// worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* fetchCoordinates(action) {
-   try {
-      const coordinates = yield call(Api.getCurrCoord);
-      yield put({type: COORDINATS_FETCH_SUCCEEDED, coordinates});
-   } catch (e) {
-      yield put({type: COORDINATS_FETCH_FAILED, message: e.message});
-   }
+  const coordinates = yield call(Api.getCurrCoord)
+  yield put({ type: COORDINATS_FETCH_SUCCEEDED, coordinates })
+  const { notifies } = yield call(() => Api.getNotificationsByLocation(coordinates.coords))
+  yield put({ type: GET_NOTIFICATIONS_BY_LOCATION, notifies })
 }
 
 export default function* rootSaga() {
