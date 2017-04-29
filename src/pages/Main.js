@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import raf from "raf";
-import './index.scss';
-import FireMap from 'components/FireMap';
-
+import React, { Component } from "react"
+import raf from "raf"
+import './index.scss'
+import FireMap from 'components/FireMap'
+import NotifyList from './NotifyList'
 export default class PopUpInfoWindowExample extends Component {
 
   state = {
@@ -113,6 +113,7 @@ export default class PopUpInfoWindowExample extends Component {
   render() {
     return (
       <div className='mapHolder'>
+        <NotifyList />
         <FireMap
           center={this.state.center}
           content={this.state.content}
