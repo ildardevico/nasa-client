@@ -1,77 +1,14 @@
-import {
-  default as React,
-  Component,
-} from "react";
-
-import {
-  withGoogleMap,
-  GoogleMap,
-  InfoWindow,
-  Circle,
-  Marker,
-} from "react-google-maps";
+import React, { Component } from "react";
 import raf from "raf";
 import './index.scss';
+import FireMap from 'components/FireMap';
 
-const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
-  <GoogleMap
-    defaultZoom={12}
-    center={props.center}
-  >
-    {props.markers.map((marker, index) => (
-      <Marker
-        key={index}
-        position={marker.position}
-        onClick={() => props.onMarkerClick(marker)}
-      >
-        {/*
-          Show info window only if the 'showInfo' key of the marker is true.
-          That is, when the Marker pin has been clicked and 'onCloseClick' has been
-          Successfully fired.
-        */}
-        {marker.showInfo && (
-          <InfoWindow onCloseClick={() => props.onMarkerClose(marker)}>
-            <div>{marker.infoContent}</div>
-          </InfoWindow>
-        )}
-      </Marker>
-    ))}
-
-    {props.center && (
-      <InfoWindow position={props.center}>
-        <div>{props.content}</div>
-      </InfoWindow>
-    )}
-    {props.center && (
-      <Circle
-        center={props.center}
-        radius={props.radius}
-        options={{
-          fillColor: `red`,
-          fillOpacity: 0.20,
-          strokeColor: `red`,
-          strokeOpacity: 1,
-          strokeWeight: 1,
-        }}
-      />
-    )}
-  </GoogleMap>
-));
-
-/*
- *
- *  Add <script src="https://maps.googleapis.com/maps/api/js"></script>
- *  to your HTML to provide google.maps reference
- *
- *  @author: @chiwoojo
- */
 export default class PopUpInfoWindowExample extends Component {
 
   state = {
     center: null,
     content: null,
     radius: 6000,
-    // array of objects of markers
     markers: [
       {
         position: new google.maps.LatLng(48.4, 35.03),
@@ -151,7 +88,7 @@ export default class PopUpInfoWindowExample extends Component {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         },
-        content: `Location found using HTML5.`,
+        content: `Current fire station.`,
       });
 
       raf(tick);
@@ -176,20 +113,14 @@ export default class PopUpInfoWindowExample extends Component {
   render() {
     return (
       <div className='mapHolder'>
-      <PopUpInfoWindowExampleGoogleMap
-        containerElement={
-          <div style={{ height: `100%` }} />
-        }
-        mapElement={
-          <div style={{ height: `100%` }} />
-        }
-        center={this.state.center}
-        content={this.state.content}
-        radius={this.state.radius}
-        markers={this.state.markers}
-        onMarkerClick={this.handleMarkerClick}
-        onMarkerClose={this.handleMarkerClose}
-      />
+        <FireMap
+          center={this.state.center}
+          content={this.state.content}
+          radius={this.state.radius}
+          markers={this.state.markers}
+          onMarkerClick={this.handleMarkerClick}
+          onMarkerClose={this.handleMarkerClose}
+        />
       </div>
     );
   }

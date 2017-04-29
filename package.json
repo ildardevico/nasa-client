@@ -11,8 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "babel-polyfill": "^6.23.0",
+    "create-react-class": "^15.5.2",
     "google-map-react": "^0.24.0",
     "koa": "^2.0.0-alpha.7",
+    "prop-types": "^15.5.8",
     "raf": "^3.3.0",
     "react": "^15.4.2",
     "react-bootstrap": "^0.30.7",
