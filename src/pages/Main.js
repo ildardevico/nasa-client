@@ -1,77 +1,196 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import GoogleMapReact from 'google-map-react';
-import * as actions from 'actions'
-import './index.scss'
+import {
+  default as React,
+  Component,
+} from "react";
 
-const AnyReactComponent = ({ text }) => (
-  <div className='svgHolder'>
-    <svg height="100" width="100">
-      <circle cx="50" cy="50" r="45" stroke="#81d3f9" strokeWidth="1" fill="#b2e6ff" fillOpacity="0.35"/>
-    </svg>
-    <svg className='svgPin' height="50" width="50" viewBox="-16 -18 64 64">
-      <path fill="#d53" stroke="black" strokeWidth="1" d="M0,47 Q0,28 10,15 A15,15 0,1,0 -10,15 Q0,28 0,47"/>
-    </svg>
-  </div>
-);
+import {
+  withGoogleMap,
+  GoogleMap,
+  InfoWindow,
+  Circle,
+  Marker,
+} from "react-google-maps";
+import raf from "raf";
+import './index.scss';
 
-class Main extends Component {
+const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
+  <GoogleMap
+    defaultZoom={12}
+    center={props.center}
+  >
+    {props.markers.map((marker, index) => (
+      <Marker
+        key={index}
+        position={marker.position}
+        onClick={() => props.onMarkerClick(marker)}
+      >
+        {/*
+          Show info window only if the 'showInfo' key of the marker is true.
+          That is, when the Marker pin has been clicked and 'onCloseClick' has been
+          Successfully fired.
+        */}
+        {marker.showInfo && (
+          <InfoWindow onCloseClick={() => props.onMarkerClose(marker)}>
+            <div>{marker.infoContent}</div>
+          </InfoWindow>
+        )}
+      </Marker>
+    ))}
 
-  state={
-    center:{
-      lat:  0,
-      lng: 0
-    }
+    {props.center && (
+      <InfoWindow position={props.center}>
+        <div>{props.content}</div>
+      </InfoWindow>
+    )}
+    {props.center && (
+      <Circle
+        center={props.center}
+        radius={props.radius}
+        options={{
+          fillColor: `red`,
+          fillOpacity: 0.20,
+          strokeColor: `red`,
+          strokeOpacity: 1,
+          strokeWeight: 1,
+        }}
+      />
+    )}
+  </GoogleMap>
+));
+
+/*
+ *
+ *  Add <script src="https://maps.googleapis.com/maps/api/js"></script>
+ *  to your HTML to provide google.maps reference
+ *
+ *  @author: @chiwoojo
+ */
+export default class PopUpInfoWindowExample extends Component {
+
+  state = {
+    center: null,
+    content: null,
+    radius: 6000,
+    // array of objects of markers
+    markers: [
+      {
+        position: new google.maps.LatLng(48.4, 35.03),
+        showInfo: false,
+        infoContent: (
+          <div>
+            <img src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png'/>
+            'some message 1'
+          </div>
+        ),
+      },
+      {
+        position: new google.maps.LatLng(48.5, 35.06),
+        showInfo: false,
+        infoContent: (
+          <div>
+          <img src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/20.png'/>
+            'some message 2'
+          </div>
+        ),
+      },
+    ],
+  };
+
+  isUnmounted = false;
+
+  // Toggle to 'true' to show InfoWindow and re-renders component
+  handleMarkerClick = (targetMarker) => {
+    this.setState({
+      markers: this.state.markers.map(marker => {
+        if (marker === targetMarker) {
+          return {
+            ...marker,
+            showInfo: true,
+          };
+        }
+        return marker;
+      }),
+    });
   }
 
-  componentWillReceiveProps (nextProps) {
-    const { coords } = nextProps.position;
-    if(coords) {
-      this.setMyposition(coords);
-    }
+  handleMarkerClose = (targetMarker) => {
+    this.setState({
+      markers: this.state.markers.map(marker => {
+        if (marker === targetMarker) {
+          return {
+            ...marker,
+            showInfo: false,
+          };
+        }
+        return marker;
+      }),
+    });
   }
-
-  setMyposition = coords => {
-    const { latitude: lat, longitude: lng  } = coords;
-    this.setState({ center: { lat, lng }})
-  }
-
-  onChange = data => this.setState(data);
 
   componentDidMount() {
-    this.props.actions.getPosition();
+    const tick = () => {
+      if (this.isUnmounted) {
+        return;
+      }
+      this.setState({ radius: Math.max(this.state.radius - 20, 0) });
+
+      if (this.state.radius > 200) {
+        raf(tick);
+      }
+    };
+    navigator.geolocation.getCurrentPosition((position) => {
+      if (this.isUnmounted) {
+        return;
+      }
+      console.log({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        })
+      this.setState({
+        center: {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        },
+        content: `Location found using HTML5.`,
+      });
+
+      raf(tick);
+    }, (reason) => {
+      if (this.isUnmounted) {
+        return;
+      }
+      this.setState({
+        center: {
+          lat: 60,
+          lng: 105,
+        },
+        content: `Error: The Geolocation service failed (${reason}).`,
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    this.isUnmounted = true;
   }
 
   render() {
-    const { center } = this.state;
-    const { position } = this.props;
-
-   return (
-    <div >
-    <div className='mapHolder'>
-     <GoogleMapReact
-        apiKey='AIzaSyCD6k__pqj9usjtMuq7JXJ_HT9y_UW5hwk'
-        onChange={this.onChange}
-        center={center}
-        defaultZoom={15}
-      >
-        <AnyReactComponent
-          lat={center.lat}
-          lng={center.lng}
-          text={'We are here'}
-        />
-      </GoogleMapReact>
+    return (
+      <div className='mapHolder'>
+      <PopUpInfoWindowExampleGoogleMap
+        containerElement={
+          <div style={{ height: `100%` }} />
+        }
+        mapElement={
+          <div style={{ height: `100%` }} />
+        }
+        center={this.state.center}
+        content={this.state.content}
+        radius={this.state.radius}
+        markers={this.state.markers}
+        onMarkerClick={this.handleMarkerClick}
+        onMarkerClose={this.handleMarkerClose}
+      />
       </div>
-      <div className='btnHolder'>
-        <span onClick={ () => this.setMyposition(position.coords)} className="btn btn-raised btn-success">My Location</span>
-      </div>
-    </div>
-   )
+    );
   }
 }
-
-export default connect(
-  ({ position }) => ({ position }),
-  dispatch => ({ actions: bindActionCreators(actions, dispatch) })
-)(Main)

@@ -13,6 +13,7 @@
     "babel-polyfill": "^6.23.0",
     "google-map-react": "^0.24.0",
     "koa": "^2.0.0-alpha.7",
+    "raf": "^3.3.0",
     "react": "^15.4.2",
     "react-bootstrap": "^0.30.7",
     "react-dom": "^15.4.2",
