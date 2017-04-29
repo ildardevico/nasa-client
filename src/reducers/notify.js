@@ -3,7 +3,7 @@ import { GET_NOTIFICATIONS_BY_LOCATION } from 'constants'
 
 const getList = (state, { notifies }) =>
   notifies.reduce((notifies, notify) => ({
-     ...acc,
+     ...notifies,
     [notify._id]: notify
   }), {})
 
