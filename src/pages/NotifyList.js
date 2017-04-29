@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Notify from 'components/Notify';
 
-class NofifyList extends Component {
+class NotifyList extends Component {
   render() {
     return (
       <div className="notify-list">
-        {this.props.notifies.map(notify => <Notify />)}
+        {Object.keys(this.props.notifies).map(key => <Notify {...this.props.notifies[key]} />)}
       </div>
     )
   }
@@ -15,4 +15,4 @@ class NofifyList extends Component {
 const mapStateToProps = ({ notifies }) => ({ notifies })
 export default connect(
   mapStateToProps
-)
+)(NotifyList)
