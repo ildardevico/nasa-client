@@ -23,6 +23,13 @@
   float: left;
   height: 100vh;
 }
+.divider {
+  height: 2px;
+  margin: 6px 0;
+  width: 100%;
+  overflow: hidden;
+  background-color: #e5e5e5;
+}
 
 .marker-item-content {
   width: 220px;
