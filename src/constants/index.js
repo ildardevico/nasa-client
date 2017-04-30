@@ -3,3 +3,5 @@ export const COORDINATS_FETCH_SUCCEEDED = 'COORDINATS_FETCH_SUCCEEDED'
 export const COORDINATS_FETCH_FAILED = 'COORDINATS_FETCH_FAILED'
 
 export const GET_NOTIFICATIONS_BY_LOCATION = 'GET_NOTIFICATIONS_BY_LOCATION'
+
+export const statuses = ['info', 'success', 'warning'];

@@ -1,8 +1,9 @@
 import React, { Component } from "react"
 import raf from "raf"
-import './index.scss'
-import FireMap from 'components/FireMap'
+import {FireMap, MarkerContent} from 'components'
 import NotifyList from './NotifyList'
+import './index.scss'
+
 export default class PopUpInfoWindowExample extends Component {
 
   state = {
@@ -13,22 +14,12 @@ export default class PopUpInfoWindowExample extends Component {
       {
         position: new google.maps.LatLng(48.4, 35.03),
         showInfo: false,
-        infoContent: (
-          <div>
-            <img src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png'/>
-            'some message 1'
-          </div>
-        ),
+        infoContent: <MarkerContent latitude={48.5} longitude={35.06} status={1}/>,
       },
       {
         position: new google.maps.LatLng(48.5, 35.06),
         showInfo: false,
-        infoContent: (
-          <div>
-          <img src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/20.png'/>
-            'some message 2'
-          </div>
-        ),
+        infoContent: <MarkerContent latitude={48.5} longitude={35.06} status={1}/>,
       },
     ],
   };
@@ -36,27 +27,13 @@ export default class PopUpInfoWindowExample extends Component {
   isUnmounted = false;
 
   // Toggle to 'true' to show InfoWindow and re-renders component
-  handleMarkerClick = (targetMarker) => {
+  handleMarkerClick = (targetMarker, showInfo) => {
     this.setState({
       markers: this.state.markers.map(marker => {
         if (marker === targetMarker) {
           return {
             ...marker,
-            showInfo: true,
-          };
-        }
-        return marker;
-      }),
-    });
-  }
-
-  handleMarkerClose = (targetMarker) => {
-    this.setState({
-      markers: this.state.markers.map(marker => {
-        if (marker === targetMarker) {
-          return {
-            ...marker,
-            showInfo: false,
+            showInfo,
           };
         }
         return marker;
@@ -79,10 +56,6 @@ export default class PopUpInfoWindowExample extends Component {
       if (this.isUnmounted) {
         return;
       }
-      console.log({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        })
       this.setState({
         center: {
           lat: position.coords.latitude,
@@ -119,8 +92,8 @@ export default class PopUpInfoWindowExample extends Component {
           content={this.state.content}
           radius={this.state.radius}
           markers={this.state.markers}
-          onMarkerClick={this.handleMarkerClick}
-          onMarkerClose={this.handleMarkerClose}
+          onMarkerClick={e=>this.handleMarkerClick(e,true)}
+          onMarkerClose={e=>this.handleMarkerClick(e,false)}
         />
       </div>
     );
