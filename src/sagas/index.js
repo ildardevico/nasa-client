@@ -5,6 +5,7 @@ import {
   COORDINATS_FETCH_FAILED,
   SET_NOTIFICATIONS_BY_LOCATION,
   GET_NOTIFICATIONS_BY_LOCATION,
+  ADD_NOTIFICATION
 } from 'constants'
 import * as Api from 'Api'
 
@@ -15,8 +16,14 @@ function* fetchCoordinates(action) {
   yield put({ type: GET_NOTIFICATIONS_BY_LOCATION, notifies })
 }
 
-export default function* rootSaga() {
-  yield takeLatest(COORDINATS_FETCH_REQUESTED, fetchCoordinates);
+function* addNotification(action) {
+const { notify } = yield call(() => Api.setNotificationsByLocation(action.payload))
+  yield put({ type: ADD_NOTIFICATION, notify })
 }
-//  const notify = yield call(() => Api.setNotificationsByLocation(action.payload))
- // yield put({ type: SET_NOTIFICATIONS_BY_LOCATION, notify })
+
+export default function* rootSaga() {
+  yield [
+    takeLatest(COORDINATS_FETCH_REQUESTED, fetchCoordinates),
+    takeEvery(SET_NOTIFICATIONS_BY_LOCATION, addNotification)
+  ]
+}

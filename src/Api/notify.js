@@ -20,8 +20,8 @@ export const setNotificationsByLocation = (coords) => {
   return request(
     NOTIFY_URL,
     {
-      metod: 'post',
-      query: {
+      method: 'POST',
+      body: {
         latitude,
         longitude,
       }

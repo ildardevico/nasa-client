@@ -55,6 +55,7 @@ class Main extends Component {
   }
 
   componentDidMount() {
+    this.props.actions.getPosition();
     const tick = () => {
       this.setState({ radius: Math.max(this.state.radius - 20, 0) });
       if (this.state.radius > 200) {
