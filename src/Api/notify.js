@@ -28,3 +28,7 @@ export const setNotificationsByLocation = (coords) => {
     }
   )
 }
+
+export const approve = ({ id }) => request(`${NOTIFY_URL}/${id}`, { method: 'PATCH'})
+
+export const resolve = ({ id }) => request(`${NOTIFY_URL}/${id}`, { method: 'PUT'})

@@ -46,10 +46,14 @@ class Main extends Component {
   }
 
   getMarks = n => {
+    const { approve, resolve } = this.props.actions
     return Object.keys(n).map(key => ({
         position: new google.maps.LatLng(n[key].latitude, n[key].longitude),
         showInfo: false,
-        infoContent: <MarkerContent {...n[key]}/>
+        infoContent: <MarkerContent
+          cb={n[key].status === 1 ? () => approve({ id: n[key]._id }): () => resolve({ id: n[key]._id }) }
+          {...n[key]}
+          />
       })
     );
   }
@@ -75,15 +79,15 @@ class Main extends Component {
     return (
       <div className='mapHolder'>
         <NotifyList notifies={this.props.notifies} />
-        <FireMap
-          center={this.state.center}
-          content={this.state.content}
-          radius={this.state.radius}
-          onMapClick={this.handleMapClick}
-          markers={this.state.markers}
-          onMarkerClick={e=>this.handleMarkerClick(e,true)}
-          onMarkerClose={e=>this.handleMarkerClick(e,false)}
-        />
+          <FireMap
+            center={this.state.center}
+            content={this.state.content}
+            radius={this.state.radius}
+            onMapClick={this.handleMapClick}
+            markers={this.state.markers}
+            onMarkerClick={e=>this.handleMarkerClick(e,true)}
+            onMarkerClose={e=>this.handleMarkerClick(e,false)}
+          />
       </div>
     );
   }

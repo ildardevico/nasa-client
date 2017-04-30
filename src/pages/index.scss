@@ -13,14 +13,37 @@
 }
 
 .mapHolder{
-    float: left;
-    width: 65vw;
-    height: 100vh;
+  float: left;
+  width: 98vw;
+  height: 100vh;
+}
+
+.map-container {
+  width: 65vw;
+  float: left;
+  height: 100vh;
+}
+
+.marker-item-content {
+  width: 220px;
+  .btn {
+    margin-top: 10px;
+  }
 }
 
 .notify-list {
   background-color: white;
-  .panel {
+  width: 35vw;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+  .notfy-item {
     margin-bottom: 0;
+    .panel-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
   }
 }

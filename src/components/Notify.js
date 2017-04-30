@@ -1,17 +1,21 @@
 import React from 'react'
-import { Panel } from 'react-bootstrap'
+import { Panel, Button } from 'react-bootstrap'
+import moment from 'moment'
+import { statuses } from 'constants'
 
-export default ({ latitude, longitude, status }) => (
+export default ({ date, latitude, longitude, status }) => (
   <Panel className="notfy-item">
-    <span className="col-md-4">
-      <span>{latitude}</span>
+    <span>
+      <span>{latitude}</span><br />
       <span>{longitude}</span>
     </span>
-    <span className="col-md-4">
-      {status}
+    <span>
+      <Button bsStyle={statuses[status].style}>
+        {statuses[status].name}
+      </Button>
     </span>
-    <span className="col-md-4">
-      Photo
+    <span>
+      {moment(date).format("MM-DD-YYYY")}
     </span>
   </Panel>
 )
