@@ -12,7 +12,8 @@ const Holder = (<div style={{ height: `100%` }} />);
 
 const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
   <GoogleMap
-    defaultZoom={12}
+    defaultZoom={11}
+    onClick={props.onMapClick}
     center={props.center}
   >
     {props.markers.map((marker, index) => (
@@ -52,7 +53,8 @@ const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
 
 PopUpInfoWindowExampleGoogleMap.defaultProps={
     containerElement: Holder,
-    mapElement: Holder
+    mapElement: Holder,
+    onMapClick: () =>{}
 }
 
 export default PopUpInfoWindowExampleGoogleMap;

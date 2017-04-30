@@ -13,21 +13,22 @@ class Main extends Component {
     center: null,
     content: null,
     radius: 6000,
-    markers: [
-      {
-        position: new google.maps.LatLng(48.4, 35.03),
-        showInfo: false,
-        infoContent: <MarkerContent latitude={48.5} longitude={35.06} status={1}/>,
-      },
-      {
-        position: new google.maps.LatLng(48.5, 35.06),
-        showInfo: false,
-        infoContent: <MarkerContent latitude={48.5} longitude={35.06} status={1}/>,
-      },
-    ],
+    markers: [],
   };
 
-  isUnmounted = false;
+  componentWillReceiveProps (nextProps) {
+    if(nextProps.notifies !== this.props.notifies) {
+      const markers = this.getMarks(nextProps.notifies);
+      this.setState({ markers })
+    }
+    if(nextProps.position !== this.props.position) {
+      const {latitude: lat, longitude: lng} = nextProps.position.coords;
+      this.setState({
+          center: { lat, lng },
+          content: `Current fire station.`
+      });
+    }
+  }
 
   // Toggle to 'true' to show InfoWindow and re-renders component
   handleMarkerClick = (targetMarker, showInfo) => {
@@ -44,48 +45,29 @@ class Main extends Component {
     });
   }
 
-  componentDidMount() {
-    this.props.actions.getPosition()
-    const tick = () => {
-      if (this.isUnmounted) {
-        return;
-      }
-      this.setState({ radius: Math.max(this.state.radius - 20, 0) });
+  getMarks = n => {
+    return Object.keys(n).map(key => ({
+        position: new google.maps.LatLng(n[key].latitude, n[key].longitude),
+        showInfo: false,
+        infoContent: <MarkerContent {...n[key]}/>
+      })
+    );
+  }
 
+  componentDidMount() {
+    const tick = () => {
+      this.setState({ radius: Math.max(this.state.radius - 20, 0) });
       if (this.state.radius > 200) {
         raf(tick);
       }
     };
-    navigator.geolocation.getCurrentPosition((position) => {
-      if (this.isUnmounted) {
-        return;
-      }
-      this.setState({
-        center: {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        },
-        content: `Current fire station.`,
-      });
-
-      raf(tick);
-    }, (reason) => {
-      if (this.isUnmounted) {
-        return;
-      }
-      this.setState({
-        center: {
-          lat: 60,
-          lng: 105,
-        },
-        content: `Error: The Geolocation service failed (${reason}).`,
-      });
-    });
-
+    raf(tick);
   }
 
-  componentWillUnmount() {
-    this.isUnmounted = true;
+  handleMapClick = (event) => {
+    const latitude = event.latLng.lat();
+    const longitude = event.latLng.lng();
+    this.props.actions.setNotify({latitude,longitude});
   }
 
   render() {
@@ -96,6 +78,7 @@ class Main extends Component {
           center={this.state.center}
           content={this.state.content}
           radius={this.state.radius}
+          onMapClick={this.handleMapClick}
           markers={this.state.markers}
           onMarkerClick={e=>this.handleMarkerClick(e,true)}
           onMarkerClose={e=>this.handleMarkerClick(e,false)}
@@ -106,6 +89,6 @@ class Main extends Component {
 }
 
 export default connect(
-  ({ coordinates, notifies }) => ({ coordinates, notifies }),
+  ({ position, notifies }) => ({ position, notifies }),
   dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 )(Main)

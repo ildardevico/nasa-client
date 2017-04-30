@@ -4,7 +4,7 @@ import {statuses} from 'constants'
 
 const { number, func, string } = PropTypes
 
-const Content = ({ latitude, longitude, status, text, cb }) => (
+const Content = ({ latitude, longitude, status, text, cb, date }) => (
   <div className="marker-item-content">
     <span className="col-md-12">
       <span>Coordinates:</span>
@@ -12,7 +12,7 @@ const Content = ({ latitude, longitude, status, text, cb }) => (
       <span>{longitude}</span>
     </span>
     <span className="col-md-12">
-      {text}
+      {date}
     </span>
     <span className={`btn btn-raised btn-${statuses[status]} offset-md-4`} onClick={cb}>
         {statuses[status]}
