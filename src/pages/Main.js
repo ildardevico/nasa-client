@@ -1,10 +1,13 @@
 import React, { Component } from "react"
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import raf from "raf"
 import {FireMap, MarkerContent} from 'components'
+import * as actions from 'actions'
 import NotifyList from './NotifyList'
 import './index.scss'
 
-export default class PopUpInfoWindowExample extends Component {
+class Main extends Component {
 
   state = {
     center: null,
@@ -42,6 +45,7 @@ export default class PopUpInfoWindowExample extends Component {
   }
 
   componentDidMount() {
+    this.props.actions.getPosition()
     const tick = () => {
       if (this.isUnmounted) {
         return;
@@ -77,6 +81,7 @@ export default class PopUpInfoWindowExample extends Component {
         content: `Error: The Geolocation service failed (${reason}).`,
       });
     });
+
   }
 
   componentWillUnmount() {
@@ -86,7 +91,7 @@ export default class PopUpInfoWindowExample extends Component {
   render() {
     return (
       <div className='mapHolder'>
-        <NotifyList />
+        <NotifyList notifies={this.props.notifies} />
         <FireMap
           center={this.state.center}
           content={this.state.content}
@@ -99,3 +104,8 @@ export default class PopUpInfoWindowExample extends Component {
     );
   }
 }
+
+export default connect(
+  ({ coordinates, notifies }) => ({ coordinates, notifies }),
+  dispatch => ({ actions: bindActionCreators(actions, dispatch) })
+)(Main)
