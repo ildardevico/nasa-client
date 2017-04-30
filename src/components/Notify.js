@@ -1,7 +1,8 @@
 import React from 'react'
+import { Panel } from 'react-bootstrap'
 
 export default ({ latitude, longitude, status }) => (
-  <div className="notfy-item">
+  <Panel className="notfy-item">
     <span className="col-md-4">
       <span>{latitude}</span>
       <span>{longitude}</span>
@@ -12,5 +13,5 @@ export default ({ latitude, longitude, status }) => (
     <span className="col-md-4">
       Photo
     </span>
-  </div>
+  </Panel>
 )
